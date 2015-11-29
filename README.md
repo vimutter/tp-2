@@ -1,28 +1,18 @@
-== README
+**README**
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Hi,
 
-Things you may want to cover:
+this is sample app that allows to search through static data of languages.
 
-* Ruby version
+*Requirements*
 
-* System dependencies
+* Ruby version is 2.1.6
 
-* Configuration
+*Data*
 
-* Database creation
+* No database. Data is located at app/models/concerns/language_data.rb
 
-* Database initialization
+*Tests*
 
-* How to run the test suite
+* To run test suite use `bundle exec rspec`
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
