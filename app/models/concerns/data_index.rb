@@ -34,7 +34,7 @@ module DataIndex
 
   def build_index_by(field)
     result = Hash.new { |hash, key| hash[key] = [] }
-    DATA.inject(result) do |result, language|
+    self::DATA.inject(result) do |result, language|
       make_array(language[field]).each do |token|
         result[token] << language
       end
