@@ -20,7 +20,7 @@ RSpec.describe LanguagesController, type: :controller do
 
       get :index, format: 'json', query: 'Something'
 
-      expect(response.body).to eq ''
+      expect(response.body).to eq '[{"foo":"bar"}]'
     end
   end
 end
