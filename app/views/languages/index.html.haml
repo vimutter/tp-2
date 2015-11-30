@@ -1,0 +1,10 @@
+.column
+  %h2 Languages search
+
+  .form
+    = form_for languages_path(format: :json), remote: true, method: :get do
+      = label_tag :query, 'Query: '
+      = text_field_tag :query, nil, placeholder: 'Enter search query here'
+      = submit_tag 'Search'
+
+  .results
