@@ -1,23 +1,28 @@
 require 'rails_helper'
 
 RSpec.describe SearchQuery do
+  subject { SearchQuery.new '' }
+
   context '#initialize' do
     it 'should fail if query is not string' do
-      expect { described_class.new }.to raise_error ArgumentError
+      expect { described_class.new 12 }.to raise_error ArgumentError
     end
   end
 
   it { is_expected.to respond_to :raw_query }
 
   context '#parse' do
-    subject { SearchQuery.new '' }
-
     before :each do
       allow(subject).to receive(:raw_query).and_return 'Positive "Complex Tokens"'
     end
 
     it 'should get positive tokens' do
       expect(subject.parse[:positive]).to eq ['Positive', 'Complex Tokens']
+    end
+
+    it 'should extract all tokens' do
+      allow(subject).to receive(:raw_query).and_return 'Positive "Complex Tokens" More "tokens"'
+      expect(subject.parse[:positive]).to eq ['Positive', 'Complex Tokens', 'More', 'tokens']
     end
 
     it 'should get negative tokens' do
@@ -27,9 +32,8 @@ RSpec.describe SearchQuery do
   end
 
   context '#results' do
-    subject { SearchQuery.new '' }
-    let(:language_1) { double :language_1 }
-    let(:language_2) { double :language_2 }
+    let(:language_1) { double :language_1, name: 'Language 1' }
+    let(:language_2) { double :language_2, name: 'Language 2' }
 
     before :each do
       allow(subject).to receive(:parse).and_return positive: ['Compiled'], negative: ['Ada']
@@ -43,7 +47,7 @@ RSpec.describe SearchQuery do
     end
 
     it 'should treat positive tokens as OR with negative as AND' do
-      expect(subject.results).to eq [language_1]
+      expect(subject.results).to eq [language_2]
     end
   end
 end
