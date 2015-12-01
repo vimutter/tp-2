@@ -16,10 +16,10 @@ $ ->
         container.append("<div class='item'>
           <div class='name'>#{item.name}</div>
           <span class='hits'>#{item.hits}</span>
-            <ul>
+            <ul class='types'>
               #{types.join('')}
             </ul>
-            <ul>
+            <ul class='designers'>
             #{designers.join('')}
             </ul>
         </div>")

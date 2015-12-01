@@ -8,3 +8,57 @@
   margin-right: auto;
   text-align: center;
 }
+.results {
+  margin: 5px;
+
+  .item:nth-child(even) {
+    background-color: #EEE;
+  }
+  .item:nth-child(odd) {
+
+  }
+
+  .item {
+    padding: 15px;
+    padding-top: 5px;
+    border-radius: .25em;
+
+    .designers, .types {
+      list-style-type: none;
+      display: table-row;
+      clear: both;
+    }
+    li {
+      margin:   3px;
+      display: inline;
+      padding: .2em .6em .3em;
+      font-size: 75%;
+      font-weight: bold;
+      line-height: 1;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: .25em;
+    }
+    .type {
+      background-color: #5bc0de;
+      float: left;
+    }
+
+    .designer {
+      background-color: #5cb85c;
+      float: left;
+    }
+
+    .name {
+      margin: 3px;
+      font-size: x-large;
+      font-weight: bold;
+      text-align: left;
+    }
+    .hits {
+      float: right;
+    }
+  }
+}
