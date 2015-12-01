@@ -66,6 +66,8 @@ class SearchQuery
     results << Language.where(type: positive)
     results << Language.where(designers: positive)
 
+    weights = weight_results results
+
     positive = results.flatten.uniq(&:name).index_by &:name
 
     results = []
@@ -76,10 +78,28 @@ class SearchQuery
 
     negative = results.inject([]) {|result, array| result | array }.uniq
 
-    positive.slice(*negative).values
+    sort_results positive.slice(*negative).values, weights
   end
 
   protected
+
+  # Extracted method from results. Ides - by given groups of results get weights of results.
+  # If item fits
+  def weight_results(results)
+    weights = Hash.new { |hash, key| hash[key] = 0 }
+
+    results.each do |set|
+      set.each do |item|
+        weights[item.name] += 1
+      end
+    end
+
+    weights
+  end
+
+  def sort_results(results, weights)
+    results.sort_by {|item| weights[item.name]}.reverse
+  end
 
   def extract_type(result, raw_query, regex, mark, destination, range)
     raw_query.split(regex).inject([]) do |raw_array, chunk|
