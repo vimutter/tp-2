@@ -72,13 +72,15 @@ class SearchQuery
 
     results = []
     negative = query[:negative].to_a
+
     results << Language.where_not(name: negative).map(&:name)
     results << Language.where_not(type: negative).map(&:name)
     results << Language.where_not(designers: negative).map(&:name)
 
-    negative = results.inject([]) {|result, array| result | array }.uniq
+    negative = results.inject(results[0]) {|result, array| result & array }.uniq
 
-    sort_results positive.slice(*negative).values, weights
+    final_results = positive.slice(*negative).values
+    sort_results set_hits(final_results, weights), weights
   end
 
   protected
@@ -97,10 +99,18 @@ class SearchQuery
     weights
   end
 
-  def sort_results(results, weights)
-    results.sort_by {|item| weights[item.name]}.reverse
+  # Set full hits value from all indexes
+  def set_hits(results, weights)
+    results.each {|item| item.hits = weights[item.name] }
   end
 
+  #Sort by ful weight
+  def sort_results(results, weights)
+    results.sort_by {|item| weights[item.name] }.reverse
+  end
+
+  # Gets tokens by type from array of pieces of raw query string.
+  # returns new pieces after removing fit tokens
   def extract_type(result, raw_query, regex, mark, destination, range)
     raw_query.split(regex).inject([]) do |raw_array, chunk|
       if chunk.starts_with?(mark)

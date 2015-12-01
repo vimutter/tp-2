@@ -67,7 +67,7 @@ class Language
     # Extracted after language spec was green
     def filter_by_array(results, field, array, method)
       partial_results = index(field).public_send(method) do |(key, items)|
-        array.any? do |filter|
+        array.blank? || array.any? do |filter|
           raise ArgumentError, 'Value of filter should be String or Array' unless filter.is_a? String
           key =~ /#{Regexp.escape(filter.to_s)}/i
         end

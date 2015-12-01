@@ -27,6 +27,11 @@ RSpec.describe Language do
       expect(result.designers).to eq ['Arthur Whitney']
     end
 
+    it 'should properly exclude fit items' do
+      result = described_class.where_not(type: ['Compiled']).detect {|item|item.name == 'Haskell'}
+      expect(result).to be nil
+    end
+
     it 'should return language objects by sring' do
       result = described_class.where_not(type: 'Compiled').first
       expect(result.name).to eq 'A+'

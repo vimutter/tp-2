@@ -32,8 +32,8 @@ RSpec.describe SearchQuery do
   end
 
   context '#results' do
-    let(:language_1) { double :language_1, name: 'Language 1', hits: 1 }
-    let(:language_2) { double :language_2, name: 'Language 2', hits: 1 }
+    let(:language_1) { double :language_1, name: 'Language 1', hits: 1, :hits= => nil }
+    let(:language_2) { double :language_2, name: 'Language 2', hits: 1, :hits= => nil }
 
     before :each do
       allow(subject).to receive(:parse).and_return positive: ['Compiled'], negative: ['Ada']
@@ -42,8 +42,8 @@ RSpec.describe SearchQuery do
       allow(Language).to receive(:where).with(designers: ['Compiled']).and_return []
 
       allow(Language).to receive(:where_not).with(name: ['Ada']).and_return [language_2]
-      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return []
-      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return []
+      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return [language_2]
+      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return [language_2]
     end
 
     it 'should treat positive tokens as OR with negative as AND' do
@@ -55,9 +55,9 @@ RSpec.describe SearchQuery do
       allow(Language).to receive(:where).with(type: ['Compiled']).and_return [language_1, language_2]
       allow(Language).to receive(:where).with(designers: ['Compiled']).and_return [language_2, language_1]
 
-      allow(Language).to receive(:where_not).with(name: ['Ada']).and_return [language_2]
-      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return [language_1]
-      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return []
+      allow(Language).to receive(:where_not).with(name: ['Ada']).and_return [language_2, language_1]
+      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return [language_1, language_2]
+      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return [language_1, language_2]
 
       expect(subject.results).to eq [language_2, language_1]
     end
@@ -67,9 +67,9 @@ RSpec.describe SearchQuery do
       allow(Language).to receive(:where).with(type: ['Compiled']).and_return [language_1]
       allow(Language).to receive(:where).with(designers: ['Compiled']).and_return [language_2, language_1]
 
-      allow(Language).to receive(:where_not).with(name: ['Ada']).and_return [language_2]
-      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return [language_1]
-      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return []
+      allow(Language).to receive(:where_not).with(name: ['Ada']).and_return [language_1, language_2]
+      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return [language_1, language_2]
+      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return [language_1, language_2]
 
       expect(subject.results).to eq [language_1, language_2]
     end
