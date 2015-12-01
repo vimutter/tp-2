@@ -20,6 +20,6 @@ this is sample app that allows to search through static data of languages.
 *TODO:*
 - ~~Add model with AR-flavored API~~
 - ~~Add SearchQuery parser~~
-- Add controller
-- Add view
+- ~~Add controller~~
+- ~~Add view~~
 
