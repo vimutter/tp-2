@@ -36,7 +36,7 @@ RSpec.describe Language do
   end
 
   it { is_expected.to respond_to(:name) }
-  it { is_expected.to respond_to(:types) }
+  it { is_expected.to respond_to(:type) }
   it { is_expected.to respond_to(:designers) }
   it { is_expected.to respond_to(:hits) }
 end

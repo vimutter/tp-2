@@ -90,7 +90,7 @@ class SearchQuery
 
     results.each do |set|
       set.each do |item|
-        weights[item.name] += 1
+        weights[item.name] += item.hits
       end
     end
 

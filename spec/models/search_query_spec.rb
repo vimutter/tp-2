@@ -32,8 +32,8 @@ RSpec.describe SearchQuery do
   end
 
   context '#results' do
-    let(:language_1) { double :language_1, name: 'Language 1' }
-    let(:language_2) { double :language_2, name: 'Language 2' }
+    let(:language_1) { double :language_1, name: 'Language 1', hits: 1 }
+    let(:language_2) { double :language_2, name: 'Language 2', hits: 1 }
 
     before :each do
       allow(subject).to receive(:parse).and_return positive: ['Compiled'], negative: ['Ada']

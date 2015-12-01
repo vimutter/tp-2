@@ -11,6 +11,10 @@ class Language
   ARRAY_FIELDS = [:type, :designers]
   SIMPLE_FIELDS = FIELDS - ARRAY_FIELDS
   attr_accessor *FIELDS
+  # For search result only, kind of violation of Single responsibility principle.
+  # But, you know, depends how do you define this single responsibility. So
+  # here its "Search result"
+  attr_accessor :hits
 
   class << self
 
@@ -29,6 +33,12 @@ class Language
     # Extracted after .where_not was done by copying whole where and changing two lines
     def seach_by(fields, positive: true)
       results = name_index.dup
+      results.each do |_, items|
+        items.each do |item|
+          item[:hits] = 0
+        end
+      end
+
       method = positive ? :select : :reject
 
       fields.with_indifferent_access.slice(*FIELDS).each_pair do |field, filters|
@@ -56,10 +66,9 @@ class Language
 
     # Extracted after language spec was green
     def filter_by_array(results, field, array, method)
-      partial_results = index(field).public_send(method) do |(key, _)|
+      partial_results = index(field).public_send(method) do |(key, items)|
         array.any? do |filter|
           raise ArgumentError, 'Value of filter should be String or Array' unless filter.is_a? String
-
           key =~ /#{Regexp.escape(filter.to_s)}/i
         end
       end
@@ -79,14 +88,28 @@ class Language
           object.public_send :"#{field}=", hash[DataIndex::FIELDS[field]]
         end
 
+        object.hits = hash[:hits]
+
         object
       end
     end
 
     # Extracted after .where spec was green
     def filter_index(index, values)
-      names = values.map{|(key, values)| values}.flatten.map {|object| object[DataIndex::NAME] }.uniq
-      index.slice(*names)
+      hits = Hash.new { |hash, key| hash[key] = 0 }
+      names = values.map{|(key, values)| values}.flatten.map {|object| object[DataIndex::NAME] }
+
+      names.each do |name|
+        hits[name] += 1
+      end
+
+      index.slice(*names.uniq).tap do |items|
+        items.each do |_, items|
+          items.each do |item|
+            item[:hits] += hits[item[DataIndex::NAME]]
+          end
+        end
+      end
     end
 
     # Made to not spread meta-complxity over the code.

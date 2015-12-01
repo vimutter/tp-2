@@ -15,6 +15,7 @@ $ ->
 
         container.append("<div class='item'>
           <div class='name'>#{item.name}</div>
+          <span class='hits'>#{item.hits}</span>
             <ul>
               #{types.join('')}
             </ul>
