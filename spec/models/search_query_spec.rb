@@ -17,17 +17,17 @@ RSpec.describe SearchQuery do
     end
 
     it 'should get positive tokens' do
-      expect(subject.parse[:positive]).to eq ['Positive', 'Complex Tokens']
+      expect(subject.parse[:positive]).to eq Set.new(['Positive', 'Complex Tokens'])
     end
 
     it 'should extract all tokens' do
       allow(subject).to receive(:raw_query).and_return 'Positive "Complex Tokens" More "tokens"'
-      expect(subject.parse[:positive]).to eq ['Positive', 'Complex Tokens', 'More', 'tokens']
+      expect(subject.parse[:positive]).to eq Set.new(['Positive', 'Complex Tokens', 'More', 'tokens'])
     end
 
     it 'should get negative tokens' do
       allow(subject).to receive(:raw_query).and_return '-Negative -"Complex Tokens"'
-      expect(subject.parse[:negative]).to eq ['Negative', 'Complex Tokens']
+      expect(subject.parse[:negative]).to eq Set.new(['Negative', 'Complex Tokens'])
     end
   end
 
