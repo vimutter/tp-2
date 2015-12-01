@@ -39,14 +39,12 @@ class Language
         end
       end
 
-      method = positive ? :select : :reject
-
       fields.with_indifferent_access.slice(*FIELDS).each_pair do |field, filters|
         case filters
         when String
-          results = filter_by_string(results, field, filters, method)
+          results = filter_by_string(results, field, filters, positive)
         when Array
-          results = filter_by_array(results, field, filters, method)
+          results = filter_by_array(results, field, filters, positive)
         else
           raise ArgumentError, 'Value of filter should be String or Array'
         end
@@ -56,24 +54,24 @@ class Language
     end
 
     # Extracted after language spec was green
-    def filter_by_string(results, field, string, method)
-      partial_results = index(field).public_send(method) do |(key, _)|
+    def filter_by_string(results, field, string, positive)
+      partial_results = index(field).select do |(key, _)|
         key =~ /#{Regexp.escape(string)}/i
       end
 
-      filter_index(results, partial_results)
+      filter_index(results, partial_results, positive)
     end
 
     # Extracted after language spec was green
-    def filter_by_array(results, field, array, method)
-      partial_results = index(field).public_send(method) do |(key, items)|
+    def filter_by_array(results, field, array, positive)
+      partial_results = index(field).select do |(key, items)|
         array.blank? || array.any? do |filter|
           raise ArgumentError, 'Value of filter should be String or Array' unless filter.is_a? String
           key =~ /#{Regexp.escape(filter.to_s)}/i
         end
       end
 
-      filter_index(results, partial_results)
+      filter_index(results, partial_results, positive)
     end
 
     # Extracted after .where spec was green
@@ -95,7 +93,7 @@ class Language
     end
 
     # Extracted after .where spec was green
-    def filter_index(index, values)
+    def filter_index(index, values, positive)
       hits = Hash.new { |hash, key| hash[key] = 0 }
       names = values.map{|(key, values)| values}.flatten.map {|object| object[DataIndex::NAME] }
 
@@ -103,7 +101,9 @@ class Language
         hits[name] += 1
       end
 
-      index.slice(*names.uniq).tap do |items|
+      method = positive ? :slice : :except
+
+      index.public_send(method, *names.uniq).tap do |items|
         items.each do |_, items|
           items.each do |item|
             item[:hits] += hits[item[DataIndex::NAME]]
