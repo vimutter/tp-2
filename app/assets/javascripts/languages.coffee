@@ -3,9 +3,9 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 $ ->
   $('.form form').on 'ajax:success', (event, data) ->
+    container = $('.results')
+    container.empty()
     if data.length > 0
-      container = $('.results')
-      container.empty()
 
       $.each data, (i, item) ->
         types = $.map item.type, (type) ->
@@ -23,4 +23,5 @@ $ ->
             </ul>
         </div>")
     else
+      container.append '<div class="warning">No data found</div>'
 
