@@ -29,6 +29,7 @@ class SearchQuery
   # and :negative tokens
   # Positive are treated as OR
   # negative are treated as AND
+  #
   def parse
     @query ||= begin
       result = {negative: Set.new, positive: Set.new}
@@ -69,13 +70,13 @@ class SearchQuery
 
     results = []
     negative = query[:negative].to_a
-    results << Language.where_not(name: negative)
-    results << Language.where_not(type: negative)
-    results << Language.where_not(designers: negative)
+    results << Language.where_not(name: negative).map(&:name)
+    results << Language.where_not(type: negative).map(&:name)
+    results << Language.where_not(designers: negative).map(&:name)
 
-    negative = results.flatten.uniq(&:name).index_by(&:name)
+    negative = results.inject([]) {|result, array| result | array }.uniq
 
-    negative.slice(*positive.keys).values
+    positive.slice(*negative).values
   end
 
   protected
