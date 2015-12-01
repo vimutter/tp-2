@@ -49,6 +49,30 @@ RSpec.describe SearchQuery do
     it 'should treat positive tokens as OR with negative as AND' do
       expect(subject.results).to eq [language_2]
     end
+
+    it 'should order results by weight: take one' do
+      allow(Language).to receive(:where).with(name: ['Compiled']).and_return [language_2]
+      allow(Language).to receive(:where).with(type: ['Compiled']).and_return [language_1, language_2]
+      allow(Language).to receive(:where).with(designers: ['Compiled']).and_return [language_2, language_1]
+
+      allow(Language).to receive(:where_not).with(name: ['Ada']).and_return [language_2]
+      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return [language_1]
+      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return []
+
+      expect(subject.results).to eq [language_2, language_1]
+    end
+
+    it 'should order results by weight: take two' do
+      allow(Language).to receive(:where).with(name: ['Compiled']).and_return [language_1, language_2]
+      allow(Language).to receive(:where).with(type: ['Compiled']).and_return [language_1]
+      allow(Language).to receive(:where).with(designers: ['Compiled']).and_return [language_2, language_1]
+
+      allow(Language).to receive(:where_not).with(name: ['Ada']).and_return [language_2]
+      allow(Language).to receive(:where_not).with(type: ['Ada']).and_return [language_1]
+      allow(Language).to receive(:where_not).with(designers: ['Ada']).and_return []
+
+      expect(subject.results).to eq [language_1, language_2]
+    end
   end
 end
 
