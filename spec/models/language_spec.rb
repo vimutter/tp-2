@@ -7,6 +7,7 @@ RSpec.describe Language do
       expect(result.name).to eq 'A+'
       expect(result.type).to eq ['Array']
       expect(result.designers).to eq ['Arthur Whitney']
+      expect(result.hits).to eq 1
     end
 
     it 'should return language objects by array' do
@@ -14,6 +15,7 @@ RSpec.describe Language do
       expect(result.name).to eq 'A+'
       expect(result.type).to eq ['Array']
       expect(result.designers).to eq ['Arthur Whitney']
+      expect(result.hits).to eq 1
     end
   end
 
@@ -32,4 +34,9 @@ RSpec.describe Language do
       expect(result.designers).to eq ['Arthur Whitney']
     end
   end
+
+  it { is_expected.to respond_to(:name) }
+  it { is_expected.to respond_to(:types) }
+  it { is_expected.to respond_to(:designers) }
+  it { is_expected.to respond_to(:hits) }
 end
